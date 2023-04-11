@@ -1,39 +1,31 @@
 pipeline {
-  agent any
-  tools{
-  nodejs "nodejs"
-  }
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout([$class: 'GitSCM', branches: [[name: '*/master']], userRemoteConfigs: [[url: 'https://github.com/arishqureshi27/calculator.git']]])
-      }
-    }
-    stage('Install dependencies') {
-      steps {
-        nodejs('node') {
-          sh 'npm install'
+    agent any
+
+    tools {nodejs "nodejs"}
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
         }
-      }
-    }
-    stage('Run tests') {
-      steps {
-        nodejs('node') {
-          sh 'npm run test -- --watchAll=false'
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
         }
-      }
-    }
-    stage('Build') {
-      steps {
-        nodejs('node') {
-          sh 'npm run build'
+
+        stage('Build') {
+            steps {
+                sh 'npm run build'
+            }
         }
-      }
-      post {
-        always {
-          archiveArtifacts artifacts: 'build/**'
+
+        stage('Deploy') {
+            steps {
+                sh 'echo "Deploying..."'
+            }
         }
-      }
     }
-  }
 }
